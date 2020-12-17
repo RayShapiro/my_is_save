@@ -1,25 +1,26 @@
-let i: number;
+let loc: tiles.Location;
 let atone = 0
 scene.setBackgroundColor(7)
 let s_image = img`
     . . . . . . . . . . . . . . . .
-    . 2 2 2 2 . . . 3 3 3 3 3 3 3 .
-    . 2 2 2 2 . . . . . . . . . 3 .
-    . 2 2 2 2 . . . . . . . . . 3 .
-    . . . . . . . . . . . . . . 3 .
-    . . . . . . . . . . . . . . 3 .
-    . . . . 5 5 5 5 . . . . . . 3 .
-    . . . . 5 5 5 5 . . . . . . 3 .
-    . . . . 5 5 5 5 . . . . . . 3 .
-    . . . . . . . . . . . . . . 3 .
-    . . . . . . . . . . . . . . 3 .
-    . . . . . . . . 8 8 8 8 . . 3 .
-    . . . . . . . . 8 8 8 8 . . . .
-    . . . . . . . . 8 8 8 8 . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
 `
 let my_is = [s_image]
+//  create sprites
 let my_sprite = sprites.create(img`
     . . . . . . f f f f . . . . . .
     . . . . f f f 2 2 f f f . . . .
@@ -57,26 +58,8 @@ let other_sprite = sprites.create(img`
     4 d d d 4 4 4 . . . . . . . . .
     4 4 4 4 . . . . . . . . . . . .
 `, SpriteKind.Enemy)
-let my_sprites = [my_sprite, other_sprite]
-let start_y = 0
-let start_x = 200
-let str = `    
-    . . . . . . b b b b . . . . . .
-    . . . . . . b 4 4 4 b . . . . .
-    . . . . . . b b 4 4 4 b . . . .
-    . . . . . b 4 b b b 4 4 b . . .
-    . . . . b d 5 5 5 4 b 4 4 b . .
-    . . . . b 3 2 3 5 5 4 e 4 4 b .
-    . . . b d 2 2 2 5 7 5 4 e 4 4 e
-    . . . b 5 3 2 3 5 5 5 5 e e e e
-    . . b d 7 5 5 5 3 2 3 5 5 e e e
-    . . b 5 5 5 5 5 2 2 2 5 5 d e e
-    . b 3 2 3 5 7 5 3 2 3 5 d d e 4
-    . b 2 2 2 5 5 5 5 5 5 d d e 4 .
-    b d 3 2 d 5 5 5 d d d 4 4 . . .
-    b 5 5 5 5 d d 4 4 4 4 . . . . .
-    4 d d d 4 4 4 . . . . . . . . .
-    4 4 4 4 . . . . . . . . . . . . `
+tiles.setTilemap(tilemap`level`)
+//  images for tilemap
 my_is[0] = img`
     . . . . . . . . . . . . . . . .
     . 2 2 2 2 . . . 3 3 3 3 3 3 3 .
@@ -97,24 +80,19 @@ my_is[0] = img`
 `
 my_is[1] = my_is[0].clone()
 my_is[1].flipY()
-for (i = 0; i < 80; i++) {
-    if (i % 10 == 0) {
-        start_y += 25
-        start_x = start_x - 190
+//  layout tiles programatically
+let start_x = 0
+let start_y = 0
+for (let i = 0; i < 200; i++) {
+    if (i % 20 == 0) {
+        start_y += 1
+        start_x = i / 40
     }
     
-    start_x += 20
-    if (i % 2 == 0) {
-        my_sprites[i] = sprites.create(my_is[0])
-    } else {
-        my_sprites[i] = sprites.create(my_is[1])
-    }
-    
-    // s_image.fill(5)
-    my_sprites[i].setPosition(start_x, start_y)
+    start_x += 1
+    loc = tiles.getTileLocation(start_x, start_y)
+    tiles.setTileAt(loc, my_is[i % 2])
 }
-// if (i == 5):
-//     my_sprites[i].set_flag(SpriteFlag.StayInScreen, True)
 other_sprite.follow(my_sprite, 40, 100)
 other_sprite.setPosition(5, 5)
 other_sprite.setFlag(SpriteFlag.StayInScreen, true)
@@ -129,19 +107,11 @@ game.onUpdateInterval(500, function on_update() {
     music.ringTone(tones[atone])
     my_is[1].flipX()
     my_is[0].flipY()
-    let ok = false
-    for (let i = 0; i < 80; i++) {
-        if (my_sprites[i].overlapsWith(my_sprite)) {
-            ok = true
-        }
-        
-    }
-    if (ok == false) {
-        game.over()
-    }
-    
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_overlap(sprite: Sprite, otherSprite: Sprite) {
     scene.cameraShake()
+    game.over()
+})
+scene.onOverlapTile(SpriteKind.Player, s_image, function on_overlap_tile(sprite: Sprite, location: tiles.Location) {
     game.over()
 })
