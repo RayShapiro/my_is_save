@@ -1,24 +1,7 @@
 let loc: tiles.Location;
 let atone = 0
 scene.setBackgroundColor(7)
-let s_image = img`
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-`
+let s_image = myTiles.transparency16
 let my_is = [s_image]
 //  create sprites
 let my_sprite = sprites.create(img`
